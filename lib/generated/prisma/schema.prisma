@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider        = "prisma-client-js"
   output          = "../lib/generated/prisma"
@@ -14,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") // Utilisé pour les migrations
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -30,52 +24,39 @@ model User {
   sessions      Session[]
 }
 
-enum Role {
-  ADMIN
-  EDITOR
-  AUTHOR
-  VIEWER
-}
-
 model Article {
   id          String    @id @default(cuid())
   title       String
   slug        String    @unique
   excerpt     String
-  content     String    @db.Text
+  content     String
   image       String?
   status      Status    @default(DRAFT)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime?
-  comments    Comment[]
   categoryId  String?
   category    Category? @relation(fields: [categoryId], references: [id])
-  tags        Tag[]     @relation("ArticleTags")
+  comments    Comment[]
   stats       Stat[]
   views       View[]
+  tags        Tag[]     @relation("ArticleTags")
 
   @@index([categoryId])
   @@index([status, publishedAt])
   @@index([slug])
 }
 
-enum Status {
-  DRAFT
-  PUBLISHED
-  SCHEDULED
-}
-
 model Comment {
   id        String   @id @default(cuid())
   name      String
   email     String
-  content   String   @db.Text
+  content   String
   approved  Boolean  @default(false)
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@index([approved, createdAt])
   @@index([articleId])
@@ -87,15 +68,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -123,8 +103,8 @@ model Category {
   id        String    @id @default(cuid())
   name      String    @unique
   slug      String    @unique
-  articles  Article[]
   createdAt DateTime  @default(now())
+  articles  Article[]
 }
 
 model Tag {
@@ -132,8 +112,8 @@ model Tag {
   name      String    @unique
   slug      String    @unique
   system    Boolean   @default(false)
-  articles  Article[] @relation("ArticleTags")
   createdAt DateTime  @default(now())
+  articles  Article[] @relation("ArticleTags")
 }
 
 model Stat {
@@ -145,8 +125,7 @@ model Stat {
   userAgent String?
   duration  Int?
   createdAt DateTime @default(now())
-
-  article Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@index([articleId])
   @@index([path])
@@ -154,12 +133,25 @@ model Stat {
 
 model View {
   id        String   @id @default(cuid())
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId String
   ipHash    String   @default("")
   createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@index([articleId])
   @@index([createdAt])
   @@index([ipHash])
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  AUTHOR
+  VIEWER
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
 }

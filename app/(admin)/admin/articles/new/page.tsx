@@ -244,7 +244,9 @@ export default function NewArticlePage() {
             <Label htmlFor="tags">Tags</Label>
             <Select
               value={selectedTags}
-              onValueChange={setSelectedTags}
+              onValueChange={(value) => {
+                setSelectedTags(Array.isArray(value) ? value : [value]);
+              }}
               multiple
             >
               <SelectTrigger>

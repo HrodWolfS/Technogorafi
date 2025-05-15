@@ -1,67 +1,76 @@
+import { Role } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth, { DefaultSession, Session, User } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { DefaultSession, NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { prisma } from "./prisma";
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user?: {
+  interface Session {
+    user: {
       id: string;
-      role?: "ADMIN";
+      role: Role;
     } & DefaultSession["user"];
-  }
-
-  interface User {
-    role?: "ADMIN";
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id?: string;
-    role?: "ADMIN";
+    role?: Role;
   }
 }
 
-export const authOptions = {
-  debug: true,
-  secret: process.env.NEXTAUTH_SECRET,
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
   callbacks: {
-    async signIn({ user }: { user: User & { email?: string | null } }) {
-      if (user.email === process.env.ADMIN_EMAIL) {
-        user.role = "ADMIN";
+    async jwt({ token, user }) {
+      console.log("🔑 JWT Callback:", { tokenBefore: token, user });
+
+      if (user && "role" in user) {
+        token.role = user.role as Role;
       }
-      return true;
-    },
-    async jwt({ token, user }: { token: JWT; user: User | undefined }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
+
+      console.log("🔑 JWT Callback résultat:", { tokenAfter: token });
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (session.user) {
-        session.user.id = token.id!;
-        session.user.role = token.role;
+    async session({ session, token }) {
+      console.log("👤 Session Callback:", { sessionBefore: session, token });
+
+      if (session.user && token?.sub) {
+        session.user.id = token.sub;
+        if (token?.role) {
+          session.user.role = token.role as Role;
+        }
       }
+
+      console.log("👤 Session Callback résultat:", { sessionAfter: session });
       return session;
     },
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/error",
   },
+  debug: true,
 };
-
-export const auth = NextAuth(authOptions);

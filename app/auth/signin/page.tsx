@@ -3,8 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { Github } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/admin/dashboard";
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="mx-auto max-w-sm space-y-6 p-6">
@@ -16,7 +20,7 @@ export default function SignInPage() {
         </div>
         <Button
           className="w-full"
-          onClick={() => signIn("github", { callbackUrl: "/admin/dashboard" })}
+          onClick={() => signIn("github", { callbackUrl })}
         >
           <Github className="mr-2 h-4 w-4" />
           Connexion avec GitHub

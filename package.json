@@ -10,7 +10,8 @@
     "lint": "next lint",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "optimize-images": "node scripts/optimizeImages.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prisma:seed": "tsx prisma/seed/seed.ts"
   },
   "dependencies": {
     "@auth/core": "^0.38.0",
@@ -66,6 +67,7 @@
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5"
   }

@@ -18,9 +18,7 @@ function AdminLink() {
 
   if (status === "loading") return null;
 
-  const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-
-  if (!session?.user || !isAdmin) return null;
+  if (!session?.user || session.user.role !== "ADMIN") return null;
 
   return (
     <Link
