@@ -1,0 +1,73 @@
+project_name: TechnoGorafi
+author: Luc RAM (personnage fictif)
+type: Blog satirique tech – dynamique, Next.js App Router + Supabase + Prisma
+
+# 🧠 Contexte de départ
+
+Ce projet est un **fork du blog "Humain Décevant"**, avec une base technique identique :
+
+- Stack utilisée :
+  - Next.js (App Router, TypeScript)
+  - TailwindCSS + CSS Variables
+  - Supabase (stockage des articles/images/commentaires en base)
+  - Prisma
+  - NextAuth pour l'accès admin
+  - Markdown géré en base (pas en `.md`)
+
+## Objectif
+
+➡️ **Créer un blog public anonyme, 100 % absurde**, nommé **TechnoGorafi**, en supprimant toute trace de "Humain Décevant" dans le code, les assets, les dépendances ou les données.
+
+---
+
+# 🧹 Étapes à automatiser ou surveiller
+
+## 🔍 Recherche de termes à supprimer/remplacer :
+
+- `humain-decevant`
+- `Humain Décevant`
+- `rodolphe`
+- `stempfel`
+- `@HumainDecevant`
+- Images/logo/favicon précédents
+- Anciennes métadonnées SEO (titre, description, domaine, og)
+
+## 📁 Emplacements à inspecter :
+
+- `/app` → routes, layout, metadata (`app/layout.tsx`, `app/page.tsx`)
+- `/components` → tout composant nommé avec des références perso
+- `/lib` → SEO config, markdown parser, hooks
+- `/styles` → variables CSS et thème lié au blog original
+- `/public` → favicon, og images, logo, etc.
+- `/prisma/schema.prisma` → modèle `User`, `Article`, `Comment`, etc.
+- `.env.local` → admin email, nom de domaine
+
+---
+
+## ✅ Ce qui doit rester / être conservé
+
+- Structure technique (admin dashboard, auth, CRUD d’articles)
+- Aperçu markdown live
+- Upload image (Supabase storage)
+- Responsiveness / SEO / sitemap / OG
+- Auth NextAuth (nouvel admin : `luc.ram@technogorafi.com`)
+
+---
+
+# 🆕 Nouveaux éléments à intégrer
+
+- **Nom du projet** : TechnoGorafi
+- **Tagline SEO** : Toute la tech. Aucun effort de vérification.
+- **Admin** : Luc RAM
+- **Logo** : nouveau logo en rouge avec tagline
+- **Style** : journal tech crédible avec contenu absurde
+
+---
+
+# ⛔️ À ne PAS faire
+
+- Ne pas supprimer la logique des features (CRUD, Auth, Editor, etc.)
+- Ne pas modifier la structure Prisma sauf mention explicite
+- Ne pas enlever la logique de markdown preview
+
+---

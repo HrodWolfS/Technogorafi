@@ -1,4 +1,4 @@
-# Humain Décevant - Blog
+# Technogorafi - Blog
 
 Blog personnel créé avec Next.js, TypeScript, Tailwind CSS, et Supabase.
 
@@ -7,8 +7,8 @@ Blog personnel créé avec Next.js, TypeScript, Tailwind CSS, et Supabase.
 1. Cloner le repo
 
 ```bash
-git clone https://github.com/HrodWolfS/Blog.git
-cd Blog
+git clone https://github.com/HrodWolfS/Technogorafi.git
+cd Technogorafi
 ```
 
 2. Installer les dépendances
@@ -120,4 +120,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
 # Technogorafi
