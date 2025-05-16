@@ -1,10 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useSession } from "@supabase/auth-helpers-react";
 import { createBrowserClient } from "@supabase/ssr";
 import { LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Logo from "./Logo";
 import ThemeSwitcher from "./ThemeSwitcher";
 
@@ -14,12 +16,8 @@ const supabase = createBrowserClient(
 );
 
 function AdminLink() {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") return null;
-
-  if (!session?.user || session.user.role !== "ADMIN") return null;
-
+  const session = useSession();
+  if (!session?.user) return null;
   return (
     <Link
       href="/admin/dashboard"
@@ -31,15 +29,12 @@ function AdminLink() {
 }
 
 function LogoutButton() {
-  const { status } = useSession();
-
+  const session = useSession();
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    await signOut();
+    toast.success("Déconnecté");
+    window.location.reload();
   };
-
-  if (status !== "authenticated") return null;
-
   return (
     <Button
       variant="ghost"
@@ -48,6 +43,17 @@ function LogoutButton() {
       title="Se déconnecter"
     >
       <LogOut className="h-5 w-5" />
+    </Button>
+  );
+}
+
+function LoginButton() {
+  const session = useSession();
+  const router = useRouter();
+  if (session) return null;
+  return (
+    <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
+      Se connecter
     </Button>
   );
 }
@@ -66,6 +72,7 @@ export default function Header() {
           </nav>
           <div className="flex items-center gap-2">
             <ThemeSwitcher />
+            <LoginButton />
             <LogoutButton />
           </div>
         </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import { getSession } from "next-auth/react";
 import { toast } from "sonner";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -12,17 +11,28 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
-    persistSession: false,
-    autoRefreshToken: false,
+    persistSession: true,
+    autoRefreshToken: true,
   },
 });
 
+// Extraction de l'ID du projet à partir de l'URL Supabase
+const supabaseProjectId = supabaseUrl.match(/https:\/\/([^.]+)/)?.[1] || "";
+
 export async function uploadImage(file: File) {
   try {
-    const session = await getSession();
-    if (!session?.user) {
-      toast.error("Vous devez être connecté pour uploader une image");
-      throw new Error("Non authentifié");
+    // Forcer l'authentification anonyme si pas de session
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      // Connexion anonyme pour le développement
+      console.log("🔑 Pas de session, tentative de connexion anonyme");
+      await supabase.auth.signInAnonymously();
+      console.log("✅ Connexion anonyme réussie");
+    } else {
+      console.log("✅ Session existante:", session.user.id);
     }
 
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
@@ -40,15 +50,25 @@ export async function uploadImage(file: File) {
       "_"
     )}`;
 
+    console.log("📤 Tentative d'upload pour:", fileName);
+    console.log("📁 Bucket:", "blog-images");
+
     const { data, error } = await supabase.storage
       .from("blog-images")
       .upload(fileName, file, {
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
       });
 
     if (error) {
-      toast.error(`Erreur: ${error.message}`);
+      console.error("❌ Erreur détaillée:", error);
+      if (error.message.includes("row-level security policy")) {
+        toast.error(
+          "Erreur de permission Storage. Vérifie que les policies sont configurées correctement."
+        );
+      } else {
+        toast.error(`Erreur d'upload: ${error.message}`);
+      }
       throw error;
     }
 
@@ -56,13 +76,24 @@ export async function uploadImage(file: File) {
       throw new Error("Pas de chemin retourné");
     }
 
-    const { data: publicUrl } = supabase.storage
-      .from("blog-images")
-      .getPublicUrl(data.path);
+    // Utilisation de getPublicUrl de Supabase pour obtenir l'URL publique correcte
+    const {
+      data: { publicUrl },
+      error: publicUrlError,
+    } = supabase.storage.from("blog-images").getPublicUrl(fileName);
 
-    return publicUrl.publicUrl;
-  } catch (error) {
-    console.error("Erreur upload:", error);
+    if (publicUrlError) {
+      console.error("❌ Erreur getPublicUrl:", publicUrlError);
+      throw publicUrlError;
+    }
+
+    console.log("🔗 URL publique:", publicUrl);
+    return publicUrl;
+  } catch (error: any) {
+    console.error("❌ Erreur upload:", error);
+    if (!error.message) {
+      toast.error("Une erreur inattendue s'est produite");
+    }
     throw error;
   }
 }

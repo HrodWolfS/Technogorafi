@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { uploadImage } from "@/lib/supabase";
+import { supabase, uploadImage } from "@/lib/supabase";
 import { ChevronLeft, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,8 +74,16 @@ export default function NewArticlePage() {
 
   const handleImageUpload = async (file: File) => {
     try {
+      // Vérifier la session Supabase
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      console.log("AVANT UPLOAD - SESSION:", !!session, session?.user?.id);
+
       setIsUploading(true);
       const imageUrl = await uploadImage(file);
+      console.log("IMAGE URL:", imageUrl);
+
       setImage(imageUrl);
       toast.success("Image uploadée avec succès");
     } catch (error) {
@@ -242,24 +250,26 @@ export default function NewArticlePage() {
 
           <div className="space-y-2">
             <Label htmlFor="tags">Tags</Label>
-            <Select
-              value={selectedTags}
-              onValueChange={(value) => {
-                setSelectedTags(Array.isArray(value) ? value : [value]);
-              }}
+            <select
+              id="tags"
               multiple
+              className="w-full rounded-md border border-input bg-background px-3 py-2"
+              value={selectedTags}
+              onChange={(e) => {
+                const values = Array.from(
+                  e.target.selectedOptions,
+                  (option) => option.value
+                );
+                setSelectedTags(values);
+              }}
+              aria-label="Sélectionner des tags"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner des tags" />
-              </SelectTrigger>
-              <SelectContent>
-                {tags.map((tag) => (
-                  <SelectItem key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {tags.map((tag) => (
+                <option key={tag.id} value={tag.id}>
+                  {tag.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

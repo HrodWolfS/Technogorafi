@@ -1,11 +1,9 @@
-
-
-import type { FC } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { calculateReadingTime } from "@/lib/readingTime";
-import { CategoryBadge } from "./CategoryBadge";
 import type { Article, Category } from "@/lib/generated/prisma";
+import { calculateReadingTime } from "@/lib/readingTime";
+import Image from "next/image";
+import Link from "next/link";
+import type { FC } from "react";
+import { CategoryBadge } from "./CategoryBadge";
 
 type Props = {
   article: Article & {
@@ -26,6 +24,7 @@ export const ArticleCard: FC<Props> = ({ article }) => {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
               priority
+              unoptimized={article.image.startsWith("http")}
             />
             {article.category && (
               <div className="absolute top-2 left-2">

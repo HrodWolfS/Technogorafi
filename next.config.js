@@ -12,6 +12,7 @@ const nextConfig = {
         hostname: "**",
       },
     ],
+    domains: ["vcffjuyglbgbpjunteob.supabase.co"],
   },
   // Désactive TOUTES les vérifications
   typescript: {
