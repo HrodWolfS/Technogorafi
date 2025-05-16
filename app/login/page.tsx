@@ -2,10 +2,10 @@
 import { supabase } from "@/lib/supabase";
 import { Github } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +25,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?callbackUrl=${
@@ -35,7 +35,7 @@ export default function LoginPage() {
       });
 
       if (error) {
-        toast.error(`Erreur d'authentification: ${error.message}`);
+        toast.error(`Erreur d&apos;authentification: ${error.message}`);
         console.error("Erreur d'authentification:", error);
       }
     } catch (err) {
@@ -52,7 +52,7 @@ export default function LoginPage() {
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">Espace Admin</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Connectez-vous pour accéder à l'espace d'administration
+            Connectez-vous pour accéder à l&apos;espace d&apos;administration
           </p>
         </div>
 
@@ -70,5 +70,13 @@ export default function LoginPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
