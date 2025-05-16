@@ -10,6 +10,7 @@ export interface Article {
   image?: string;
   categories?: string[];
   tags?: string[];
+  category?: string;
   content: string;
 }
 

@@ -44,6 +44,10 @@ export async function generateMetadata({ params }) {
         lte: new Date(),
       },
     },
+    include: {
+      tags: true,
+      category: true,
+    },
   });
 
   if (!article) return null;
@@ -91,6 +95,10 @@ export default async function ArticlePage({ params }) {
       publishedAt: {
         lte: new Date(),
       },
+    },
+    include: {
+      tags: true,
+      category: true,
     },
   });
 
@@ -170,8 +178,8 @@ export default async function ArticlePage({ params }) {
               {(article.categories?.length || article.tags?.length) && (
                 <div className="mb-8">
                   <ArticleTags
-                    categories={article.categories}
-                    tags={article.tags}
+                    categories={article.category ? [article.category.name] : []}
+                    tags={article.tags.map((tag) => tag.name)}
                   />
                 </div>
               )}

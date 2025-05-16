@@ -31,7 +31,11 @@ function isCacheValid(): boolean {
  */
 function refreshCache(): void {
   const now = Date.now();
-  const articles = getAllArticlesFromDisk();
+  const articles = getAllArticlesFromDisk().map((article) => ({
+    ...article,
+    tags: article.tags || [],
+    category: article.category || undefined,
+  }));
 
   cache.articles = articles;
   cache.articlesBySlug = {};

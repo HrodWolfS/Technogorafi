@@ -10,6 +10,10 @@ export async function GET(
     const { id } = await params;
     const article = await prisma.article.findUnique({
       where: { id },
+      include: {
+        tags: true,
+        category: true,
+      },
     });
 
     if (!article) {
@@ -35,7 +39,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
-    const { title, excerpt, content, status, image } = body;
+    const { title, excerpt, content, status, image, categoryId, tagIds } = body;
 
     const article = await prisma.article.update({
       where: { id },
@@ -47,6 +51,20 @@ export async function PATCH(
         image,
         updatedAt: new Date(),
         publishedAt: status === "PUBLISHED" ? new Date() : null,
+        category: categoryId
+          ? {
+              connect: { id: categoryId },
+            }
+          : undefined,
+        tags: tagIds
+          ? {
+              set: tagIds.map((tagId: string) => ({ id: tagId })),
+            }
+          : undefined,
+      },
+      include: {
+        tags: true,
+        category: true,
       },
     });
 

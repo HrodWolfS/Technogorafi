@@ -25,6 +25,8 @@ type Article = {
   content: string;
   image: string | null;
   status: "DRAFT" | "PUBLISHED" | "SCHEDULED";
+  categoryId: string;
+  tags: { id: string; name: string }[];
 };
 
 export default function EditArticlePage({
@@ -35,6 +37,11 @@ export default function EditArticlePage({
   const { id } = use(params);
   const router = useRouter();
   const [article, setArticle] = useState<Article | null>(null);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    []
+  );
+  const [tags, setTags] = useState<{ id: string; name: string }[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -42,12 +49,20 @@ export default function EditArticlePage({
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await fetch(`/api/articles/${id}`);
-        if (!response.ok) {
-          throw new Error("Article non trouvé");
-        }
-        const data = await response.json();
-        setArticle(data);
+        const [articleData, tagsData, categoriesData] = await Promise.all([
+          fetch(`/api/articles/${id}`).then((res) => {
+            if (!res.ok) throw new Error("Article non trouvé");
+            return res.json();
+          }),
+          fetch("/api/tags").then((res) => res.json()),
+          fetch("/api/categories").then((res) => res.json()),
+        ]);
+        setArticle(articleData);
+        setTags(tagsData);
+        setCategories(categoriesData);
+        setSelectedTags(
+          articleData.tags?.map((t: { id: string }) => t.id) ?? []
+        );
       } catch (error) {
         console.error("Error fetching article:", error);
         toast.error("Erreur lors du chargement de l'article");
@@ -95,6 +110,8 @@ export default function EditArticlePage({
           content: article.content,
           status: article.status,
           image: article.image,
+          categoryId: article.categoryId,
+          tagIds: selectedTags,
         }),
       });
 
@@ -202,6 +219,87 @@ export default function EditArticlePage({
                 <ImageIcon className="h-12 w-12 text-muted-foreground/25" />
               </div>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Catégorie</Label>
+            <Select
+              value={article.categoryId}
+              onValueChange={(value) =>
+                setArticle((prev) => prev && { ...prev, categoryId: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner une catégorie" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Tags</Label>
+            <div className="flex flex-wrap gap-2">
+              {selectedTags
+                .map((id) => tags.find((t) => t.id === id))
+                .filter(Boolean)
+                .map((tag) => (
+                  <div
+                    key={tag!.id}
+                    className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-sm flex items-center gap-1"
+                  >
+                    {tag!.name}
+                    <button
+                      type="button"
+                      className="text-xs ml-1"
+                      onClick={() =>
+                        setSelectedTags((prev) =>
+                          prev.filter((t) => t !== tag.id)
+                        )
+                      }
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+            </div>
+
+            <Input
+              type="text"
+              placeholder="Rechercher un tag..."
+              onChange={(e) => {
+                const search = e.target.value.toLowerCase();
+                const match = tags.find(
+                  (t) =>
+                    t.name.toLowerCase() === search &&
+                    !selectedTags.includes(t.id)
+                );
+                if (match) {
+                  setSelectedTags([...selectedTags, match.id]);
+                  e.target.value = "";
+                }
+              }}
+            />
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              {tags
+                .filter((tag) => !selectedTags.includes(tag.id))
+                .map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => setSelectedTags([...selectedTags, tag.id])}
+                    className="border border-muted px-2 py-1 rounded-full text-sm hover:bg-muted"
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+            </div>
           </div>
 
           <div className="space-y-2">

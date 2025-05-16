@@ -27,7 +27,7 @@ export default function Comments({ articleId }: { articleId: string }) {
     return (
       <div className="mt-12 space-y-8">
         <div className="flex items-center gap-2">
-          <div className="text-orange-500">
+          <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ export default function Comments({ articleId }: { articleId: string }) {
 
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="border-l-2 border-orange-500 pl-4">
+            <div key={i} className="border-l-2 border-primary pl-4">
               <div className="flex items-center gap-2">
                 <Skeleton className="w-8 h-8 rounded-full" />
                 <Skeleton className="h-4 w-24" />
@@ -62,7 +62,7 @@ export default function Comments({ articleId }: { articleId: string }) {
   return (
     <div className="mt-12 space-y-8">
       <div className="flex items-center gap-2">
-        <div className="text-orange-500">
+        <div className="text-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -81,10 +81,10 @@ export default function Comments({ articleId }: { articleId: string }) {
 
       <div className="space-y-6">
         {comments?.map((comment) => (
-          <div key={comment.id} className="border-l-2 border-orange-500 pl-4">
+          <div key={comment.id} className="border-l-2 border-primary pl-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                   {comment.name.charAt(0).toUpperCase()}
                 </div>
                 <span className="font-medium text-foreground">

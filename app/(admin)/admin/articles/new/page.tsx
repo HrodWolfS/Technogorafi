@@ -121,7 +121,7 @@ export default function NewArticlePage() {
 
       const article = await response.json();
       toast.success("Article créé avec succès");
-      router.push(`/admin/articles/${article.id}`);
+      router.push("/admin/articles");
     } catch (error) {
       console.error("Error creating article:", error);
       toast.error("Erreur lors de la création de l'article");
@@ -250,26 +250,66 @@ export default function NewArticlePage() {
 
           <div className="space-y-2">
             <Label htmlFor="tags">Tags</Label>
-            <select
-              id="tags"
-              multiple
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
-              value={selectedTags}
+            <div className="flex flex-wrap gap-2">
+              {selectedTags
+                .map((tagId) => tags.find((t) => t.id === tagId))
+                .filter(Boolean)
+                .map((tag) => (
+                  <div
+                    key={tag!.id}
+                    className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-sm flex items-center gap-1"
+                  >
+                    {tag!.name}
+                    <button
+                      type="button"
+                      className="text-xs ml-1"
+                      onClick={() =>
+                        setSelectedTags((prev) =>
+                          prev.filter((id) => id !== tag!.id)
+                        )
+                      }
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+            </div>
+
+            <Input
+              type="text"
+              placeholder="Rechercher un tag..."
               onChange={(e) => {
-                const values = Array.from(
-                  e.target.selectedOptions,
-                  (option) => option.value
+                const search = e.target.value.toLowerCase();
+                const matched = tags.filter(
+                  (tag) =>
+                    tag.name.toLowerCase().includes(search) &&
+                    !selectedTags.includes(tag.id)
                 );
-                setSelectedTags(values);
+                if (
+                  matched.length === 1 &&
+                  search === matched[0].name.toLowerCase()
+                ) {
+                  setSelectedTags([...selectedTags, matched[0].id]);
+                  e.target.value = "";
+                }
               }}
-              aria-label="Sélectionner des tags"
-            >
-              {tags.map((tag) => (
-                <option key={tag.id} value={tag.id}>
-                  {tag.name}
-                </option>
-              ))}
-            </select>
+              className="mt-2"
+            />
+
+            <div className="mt-2 flex flex-wrap gap-2">
+              {tags
+                .filter((tag) => !selectedTags.includes(tag.id))
+                .map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    className="border border-muted px-2 py-1 rounded-full text-sm hover:bg-muted"
+                    onClick={() => setSelectedTags([...selectedTags, tag.id])}
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+            </div>
           </div>
         </div>
 

@@ -110,10 +110,7 @@ export default function CommentForm({ articleId }: { articleId: string }) {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white"
-        >
+        <Button type="submit" className="w-full text-white">
           Envoyer
         </Button>
       </form>

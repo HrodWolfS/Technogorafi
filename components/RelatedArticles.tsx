@@ -19,7 +19,7 @@ export function RelatedArticles({
   return (
     <div className="mt-12 border-t border-border pt-6">
       <div className="flex items-center gap-2">
-        <div className="text-orange-500">
+        <div className="text-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -44,8 +44,8 @@ export function RelatedArticles({
             className="block hover:bg-background/50 -mx-2 px-2 py-1 rounded-lg transition-colors"
           >
             <div className="flex items-center gap-2 border p-2 rounded-lg hover:bg-primary/20 transition-colors">
-              <div className="text-orange-500">→</div>
-              <span className="text-foreground hover:text-orange-500 transition-colors">
+              <div className="text-primary">→</div>
+              <span className="text-foreground hover:text-primary transition-colors">
                 {article.title}
               </span>
             </div>

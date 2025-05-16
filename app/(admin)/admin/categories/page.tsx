@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pencil, Plus, Trash } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
 import { toast } from "sonner";
@@ -228,7 +229,15 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Gestion des catégories et tags</h1>
+        <div className="space-y-2">
+          <Link
+            href="/admin/dashboard"
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            ← Retour au dashboard
+          </Link>
+          <h1 className="text-3xl font-bold">Gestion des catégories et tags</h1>
+        </div>
       </div>
 
       <Tabs defaultValue="categories">

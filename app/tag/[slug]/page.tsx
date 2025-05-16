@@ -1,34 +1,38 @@
-import ArticleCard from "@/components/ArticleCard";
-import { getAllArticles } from "@/lib/cache";
+import { ArticleCard } from "@/components/ArticleCard";
+import { prisma } from "@/lib/prisma";
+import type { PageParams } from "@/types/next";
 import Link from "next/link";
 
-interface TagPageProps {
-  params: {
-    slug: string;
-  };
-}
+export default async function TagPage({
+  params,
+}: PageParams<{ slug: string }>) {
+  const tag = decodeURIComponent(params.slug);
 
-// Fonction pour générer les paramètres statiques
-export async function generateStaticParams() {
-  const articles = getAllArticles();
-  const tags = new Set<string>();
-
-  articles.forEach((article) => {
-    if (article.tags && Array.isArray(article.tags)) {
-      article.tags.forEach((tag) => tags.add(tag.toLowerCase()));
-    }
+  const articles = await prisma.article.findMany({
+    where: {
+      status: "PUBLISHED",
+      publishedAt: {
+        lte: new Date(),
+      },
+      tags: {
+        some: {
+          name: {
+            equals: tag,
+            mode: "insensitive",
+          },
+        },
+      },
+    },
+    include: {
+      tags: true,
+      category: true,
+    },
+    orderBy: {
+      publishedAt: "desc",
+    },
   });
 
-  return Array.from(tags).map((tag) => ({
-    slug: tag,
-  }));
-}
-
-export default function TagPage({ params }: TagPageProps) {
-  const tag = decodeURIComponent(params.slug);
-  const articles = getAllArticles().filter((article) =>
-    article.tags?.some((t) => t.toLowerCase() === tag.toLowerCase())
-  );
+  console.log(`Trouvé ${articles.length} articles pour le tag "${tag}"`);
 
   return (
     <div className="space-y-8">
@@ -49,10 +53,30 @@ export default function TagPage({ params }: TagPageProps) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {articles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       )}
     </div>
   );
+}
+
+// Fonction pour générer les paramètres statiques
+export async function generateStaticParams() {
+  const tags = await prisma.tag.findMany({
+    where: {
+      articles: {
+        some: {
+          status: "PUBLISHED",
+          publishedAt: {
+            lte: new Date(),
+          },
+        },
+      },
+    },
+  });
+
+  return tags.map((tag) => ({
+    slug: tag.name.toLowerCase(),
+  }));
 }
