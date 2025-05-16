@@ -1,9 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   CartesianGrid,
@@ -62,7 +65,17 @@ export default function StatistiquesPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Statistiques</h1>
+        <div className="flex items-center justify-between ">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/dashboard">
+                <ChevronLeft className="h-4 w-4" />
+                Retour
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">Statistiques</h1>
+          </div>
+        </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="animate-pulse">
@@ -85,7 +98,17 @@ export default function StatistiquesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Statistiques</h1>
+      <div className="flex items-center justify-between ">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/admin/dashboard">
+              <ChevronLeft className="h-4 w-4" />
+              Retour
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold">Statistiques</h1>
+        </div>
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card>

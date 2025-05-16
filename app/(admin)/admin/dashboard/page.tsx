@@ -53,7 +53,7 @@ export default async function DashboardPage() {
             <Button
               key={section.href}
               variant="outline"
-              className="h-auto p-0"
+              className="h-auto p-0 hover:border-primary"
               asChild
             >
               <Link href={section.href}>

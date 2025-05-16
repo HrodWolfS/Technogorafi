@@ -1,6 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { approveComment, deleteComment } from "./actions";
@@ -44,6 +47,7 @@ export default function CommentsPage() {
       toast.success("Commentaire approuvé");
       loadComments();
     } catch (error) {
+      console.error("Erreur lors de l'approbation du commentaire:", error);
       toast.error("Erreur lors de l'approbation du commentaire");
     }
   };
@@ -54,12 +58,24 @@ export default function CommentsPage() {
       toast.success("Commentaire supprimé");
       loadComments();
     } catch (error) {
+      console.error("Erreur lors de la suppression du commentaire:", error);
       toast.error("Erreur lors de la suppression du commentaire");
     }
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 space-y-6">
+      <div className="flex items-center justify-between ">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/admin/dashboard">
+              <ChevronLeft className="h-4 w-4" />
+              Retour
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold">Commentaires</h1>
+        </div>
+      </div>
       <DataTable
         columns={columns}
         data={comments}

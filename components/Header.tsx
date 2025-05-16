@@ -15,50 +15,10 @@ const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-function AdminLink() {
-  const session = useSession();
-  if (!session?.user) return null;
-  return (
-    <Link
-      href="/admin/dashboard"
-      className="text-foreground/80 hover:text-primary font-medium"
-    >
-      Admin
-    </Link>
-  );
-}
-
-function LogoutButton() {
-  const session = useSession();
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast.success("Déconnecté");
-    window.location.reload();
-  };
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={handleSignOut}
-      title="Se déconnecter"
-    >
-      <LogOut className="h-5 w-5" />
-    </Button>
-  );
-}
-
-function LoginButton() {
+export default function Header() {
   const session = useSession();
   const router = useRouter();
-  if (session) return null;
-  return (
-    <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
-      Se connecter
-    </Button>
-  );
-}
 
-export default function Header() {
   return (
     <header className="border-b border-border bg-card">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -68,13 +28,32 @@ export default function Header() {
             <Link href="/" className="text-foreground/80 hover:text-primary">
               Accueil
             </Link>
-            <AdminLink />
+            {session?.user && (
+              <Link
+                href="/admin/dashboard"
+                className="text-foreground/80 hover:text-primary font-medium"
+              >
+                Admin
+              </Link>
+            )}
           </nav>
-          <div className="flex items-center gap-2">
-            <ThemeSwitcher />
-            <LoginButton />
-            <LogoutButton />
-          </div>
+          {session?.user && (
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  toast.success("Déconnecté");
+                  router.push("/");
+                }}
+                title="Se déconnecter"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { ChevronLeft, Pencil, Plus, Trash } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
@@ -151,9 +151,9 @@ export default function CategoriesPage() {
 
       await fetchCategoriesAndTags();
       toast.success("Catégorie supprimée avec succès");
-    } catch (error: any) {
-      console.error("Error:", error);
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la catégorie:", error);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -170,9 +170,9 @@ export default function CategoriesPage() {
 
       await fetchCategoriesAndTags();
       toast.success("Tag supprimé avec succès");
-    } catch (error: any) {
-      console.error("Error:", error);
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      console.error("Erreur lors de la suppression du tag:", error);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -228,15 +228,15 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <Link
-            href="/admin/dashboard"
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            ← Retour au dashboard
-          </Link>
-          <h1 className="text-3xl font-bold">Gestion des catégories et tags</h1>
+      <div className="flex items-center justify-between ">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/admin/dashboard">
+              <ChevronLeft className="h-4 w-4" />
+              Retour
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold">Catégories et tags</h1>
         </div>
       </div>
 
