@@ -11,6 +11,8 @@ import { prisma } from "@/lib/prisma";
 import { ChevronLeft, MessageSquare, Plus } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 type Status = "DRAFT" | "PUBLISHED" | "SCHEDULED";
 
 const statusConfig: Record<
