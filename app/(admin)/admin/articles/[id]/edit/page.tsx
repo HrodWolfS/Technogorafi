@@ -45,6 +45,7 @@ export default function EditArticlePage({
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [tagSearch, setTagSearch] = useState("");
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -269,37 +270,29 @@ export default function EditArticlePage({
                 ))}
             </div>
 
-            <Input
-              type="text"
-              placeholder="Rechercher un tag..."
-              onChange={(e) => {
-                const search = e.target.value.toLowerCase();
-                const match = tags.find(
-                  (t) =>
-                    t.name.toLowerCase() === search &&
-                    !selectedTags.includes(t.id)
-                );
-                if (match) {
-                  setSelectedTags([...selectedTags, match.id]);
-                  e.target.value = "";
-                }
+            <Select
+              onValueChange={(tagId) => {
+                setSelectedTags([...selectedTags, tagId]);
+                setTagSearch("");
               }}
-            />
-
-            <div className="flex flex-wrap gap-2 mt-2">
-              {tags
-                .filter((tag) => !selectedTags.includes(tag.id))
-                .map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => setSelectedTags([...selectedTags, tag.id])}
-                    className="border border-muted px-2 py-1 rounded-full text-sm hover:bg-muted"
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-            </div>
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Rechercher ou créer un tag..." />
+              </SelectTrigger>
+              <SelectContent>
+                {tags
+                  .filter(
+                    (tag) =>
+                      !selectedTags.includes(tag.id) &&
+                      tag.name.toLowerCase().includes(tagSearch.toLowerCase())
+                  )
+                  .map((tag) => (
+                    <SelectItem key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

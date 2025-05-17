@@ -1,5 +1,7 @@
 "use client";
 
+import slugify from "slugify";
+
 import Editor from "@/components/admin/Editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +47,7 @@ export default function NewArticlePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [newTagName, setNewTagName] = useState("");
 
   useEffect(() => {
     const fetchCategoriesAndTags = async () => {
@@ -275,40 +278,71 @@ export default function NewArticlePage() {
                 ))}
             </div>
 
-            <Input
-              type="text"
-              placeholder="Rechercher un tag..."
-              onChange={(e) => {
-                const search = e.target.value.toLowerCase();
-                const matched = tags.filter(
-                  (tag) =>
-                    tag.name.toLowerCase().includes(search) &&
-                    !selectedTags.includes(tag.id)
-                );
-                if (
-                  matched.length === 1 &&
-                  search === matched[0].name.toLowerCase()
-                ) {
-                  setSelectedTags([...selectedTags, matched[0].id]);
-                  e.target.value = "";
-                }
-              }}
-              className="mt-2"
-            />
-
-            <div className="mt-2 flex flex-wrap gap-2">
-              {tags
-                .filter((tag) => !selectedTags.includes(tag.id))
-                .map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    className="border border-muted px-2 py-1 rounded-full text-sm hover:bg-muted"
-                    onClick={() => setSelectedTags([...selectedTags, tag.id])}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Rechercher ou créer un tag..."
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                className="mt-2"
+              />
+              {newTagName && (
+                <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-md max-h-48 overflow-auto">
+                  {tags
+                    .filter(
+                      (tag) =>
+                        tag.name
+                          .toLowerCase()
+                          .includes(newTagName.toLowerCase()) &&
+                        !selectedTags.includes(tag.id)
+                    )
+                    .map((tag) => (
+                      <div
+                        key={tag.id}
+                        onClick={() => {
+                          setSelectedTags((prev) => [...prev, tag.id]);
+                          setNewTagName("");
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-muted"
+                      >
+                        {tag.name}
+                      </div>
+                    ))}
+                  {!tags.some(
+                    (t) => t.name.toLowerCase() === newTagName.toLowerCase()
+                  ) && (
+                    <div
+                      onClick={async () => {
+                        try {
+                          const res = await fetch("/api/tags", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              name: newTagName,
+                              slug: slugify(newTagName, {
+                                lower: true,
+                                strict: true,
+                              }),
+                            }),
+                            credentials: "include",
+                          });
+                          if (!res.ok) throw new Error();
+                          const createdTag = await res.json();
+                          setTags((prev) => [...prev, createdTag]);
+                          setSelectedTags((prev) => [...prev, createdTag.id]);
+                          setNewTagName("");
+                          toast.success("Tag créé !");
+                        } catch (err) {
+                          toast.error("Erreur lors de la création du tag");
+                        }
+                      }}
+                      className="cursor-pointer px-4 py-2 hover:bg-muted text-primary"
+                    >
+                      Créer le tag “{newTagName}”
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
