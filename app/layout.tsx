@@ -103,6 +103,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
