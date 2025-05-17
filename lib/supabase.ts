@@ -21,20 +21,6 @@ const supabaseProjectId = supabaseUrl.match(/https:\/\/([^.]+)/)?.[1] || "";
 
 export async function uploadImage(file: File) {
   try {
-    // Forcer l'authentification anonyme si pas de session
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      // Connexion anonyme pour le développement
-      console.log("🔑 Pas de session, tentative de connexion anonyme");
-      await supabase.auth.signInAnonymously();
-      console.log("✅ Connexion anonyme réussie");
-    } else {
-      console.log("✅ Session existante:", session.user.id);
-    }
-
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
       toast.error("Type de fichier non autorisé. Utilisez JPG, PNG ou WebP");
       throw new Error("Type de fichier non autorisé");
