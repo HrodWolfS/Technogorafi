@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+// Fonction partagée pour le traitement des requêtes GET et POST
+async function handleCronRequest(request: Request) {
   console.log("[CRON] Fonction /api/cron/publish-scheduled appelée");
 
   // Vérification de l'authentification Vercel Cron
@@ -54,4 +55,14 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+// Handler pour les requêtes GET (Vercel Cron utilise GET)
+export async function GET(request: Request) {
+  return handleCronRequest(request);
+}
+
+// Conserver le handler POST pour d'autres usages si nécessaire
+export async function POST(request: Request) {
+  return handleCronRequest(request);
 }
