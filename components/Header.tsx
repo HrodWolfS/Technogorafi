@@ -28,30 +28,31 @@ export default function Header() {
             <Link href="/" className="text-foreground/80 hover:text-primary">
               Accueil
             </Link>
-
-            <Link
-              href="/admin/dashboard"
-              className="text-foreground/80 hover:text-primary font-medium"
-            >
-              Admin
-            </Link>
+            <ThemeSwitcher />
           </nav>
 
-          <div className="flex items-center gap-2">
-            <ThemeSwitcher />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                toast.success("Déconnecté");
-                router.push("/");
-              }}
-              title="Se déconnecter"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
+          {session && (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/admin/dashboard"
+                className="text-foreground/80 hover:text-primary font-medium"
+              >
+                Admin
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  toast.success("Déconnecté");
+                  router.push("/");
+                }}
+                title="Se déconnecter"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>
