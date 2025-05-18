@@ -1,22 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useSession } from "@supabase/auth-helpers-react";
-import { createBrowserClient } from "@supabase/ssr";
 import { LogOut } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Logo from "./Logo";
 import ThemeSwitcher from "./ThemeSwitcher";
 
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export default function Header() {
-  const session = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   return (
@@ -31,7 +25,7 @@ export default function Header() {
             <ThemeSwitcher />
           </nav>
 
-          {session && (
+          {status === "authenticated" && (
             <div className="flex items-center gap-2">
               <Link
                 href="/admin/dashboard"
@@ -43,7 +37,7 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 onClick={async () => {
-                  await supabase.auth.signOut();
+                  await signOut();
                   toast.success("Déconnecté");
                   router.push("/");
                 }}
