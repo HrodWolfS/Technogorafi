@@ -94,13 +94,15 @@ export async function PATCH(
         status,
         image,
         updatedAt: new Date(),
-        ...(status === "PUBLISHED" ? { publishedAt: new Date() } : {}),
+        ...(status === "PUBLISHED"
+          ? { publishedAt: new Date() }
+          : { publishedAt: null }), // Réinitialiser publishedAt quand on n'est pas en PUBLISHED
         ...(status === "SCHEDULED" && scheduledAt
           ? {
               scheduledAt,
               publishedAt: null, // Réinitialiser publishedAt pour les articles planifiés
             }
-          : {}),
+          : { scheduledAt: null }), // Réinitialiser scheduledAt quand le statut n'est pas SCHEDULED
         category: categoryId
           ? {
               connect: { id: categoryId },

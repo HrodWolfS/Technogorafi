@@ -27,7 +27,8 @@ type Article = {
   status: "DRAFT" | "PUBLISHED" | "SCHEDULED";
   categoryId: string;
   tags: { id: string; name: string }[];
-  scheduledAt?: string;
+  scheduledAt: string | null | undefined;
+  publishedAt: string | null | undefined;
 };
 
 export default function EditArticlePage({
@@ -314,9 +315,24 @@ export default function EditArticlePage({
             <Label htmlFor="status">Statut</Label>
             <Select
               value={article.status}
-              onValueChange={(value: "DRAFT" | "PUBLISHED" | "SCHEDULED") =>
-                setArticle({ ...article, status: value })
-              }
+              onValueChange={(value: "DRAFT" | "PUBLISHED" | "SCHEDULED") => {
+                setArticle((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        status: value,
+                        scheduledAt:
+                          value === "SCHEDULED"
+                            ? prev.scheduledAt ?? new Date().toISOString()
+                            : null,
+                        publishedAt:
+                          value === "PUBLISHED"
+                            ? prev.publishedAt ?? new Date().toISOString()
+                            : null,
+                      }
+                    : prev
+                );
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionner un statut" />

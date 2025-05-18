@@ -13,6 +13,8 @@ const articleSchema = z.object({
   image: z.string().nullable(),
   categoryId: z.string().nullable(),
   tagIds: z.array(z.string()).optional(),
+  scheduledAt: z.string().nullable().optional(),
+  publishedAt: z.string().nullable().optional(),
 });
 
 type Status = "DRAFT" | "PUBLISHED" | "SCHEDULED";
@@ -26,8 +28,17 @@ export async function POST(request: Request) {
 
     const json = await request.json();
     const validatedData = articleSchema.parse(json);
-    const { title, excerpt, content, status, image, categoryId, tagIds } =
-      validatedData;
+    const {
+      title,
+      excerpt,
+      content,
+      status,
+      image,
+      categoryId,
+      tagIds,
+      scheduledAt,
+      publishedAt,
+    } = validatedData;
 
     const slug = slugify(title, { lower: true, strict: true });
 
@@ -40,6 +51,8 @@ export async function POST(request: Request) {
         status,
         image,
         categoryId,
+        scheduledAt: status === "SCHEDULED" ? scheduledAt : null,
+        publishedAt: status === "PUBLISHED" ? publishedAt || new Date() : null,
         tags: tagIds?.length
           ? {
               connect: tagIds.map((id: string) => ({ id })),

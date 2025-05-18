@@ -41,6 +41,8 @@ export default function NewArticlePage() {
   const [status, setStatus] = useState<"DRAFT" | "PUBLISHED" | "SCHEDULED">(
     "DRAFT"
   );
+  const [scheduledAt, setScheduledAt] = useState<string | null>(null);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -48,6 +50,27 @@ export default function NewArticlePage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTagName, setNewTagName] = useState("");
+
+  // Mise à jour du statut avec gestion des dates
+  const handleStatusChange = (value: "DRAFT" | "PUBLISHED" | "SCHEDULED") => {
+    setStatus(value);
+
+    // Gestion de scheduledAt
+    if (value === "SCHEDULED") {
+      setScheduledAt(scheduledAt || new Date().toISOString());
+      setPublishedAt(null);
+    }
+    // Gestion de publishedAt
+    else if (value === "PUBLISHED") {
+      setPublishedAt(new Date().toISOString());
+      setScheduledAt(null);
+    }
+    // Réinitialisation des deux si DRAFT
+    else {
+      setScheduledAt(null);
+      setPublishedAt(null);
+    }
+  };
 
   useEffect(() => {
     const fetchCategoriesAndTags = async () => {
@@ -107,6 +130,7 @@ export default function NewArticlePage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           title,
           excerpt,
@@ -115,6 +139,8 @@ export default function NewArticlePage() {
           image,
           categoryId: selectedCategory || null,
           tagIds: selectedTags,
+          scheduledAt,
+          publishedAt,
         }),
       });
 
@@ -215,12 +241,7 @@ export default function NewArticlePage() {
 
           <div className="space-y-2">
             <Label htmlFor="status">Statut</Label>
-            <Select
-              value={status}
-              onValueChange={(value: "DRAFT" | "PUBLISHED" | "SCHEDULED") =>
-                setStatus(value)
-              }
-            >
+            <Select value={status} onValueChange={handleStatusChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionner un statut" />
               </SelectTrigger>
@@ -230,6 +251,96 @@ export default function NewArticlePage() {
                 <SelectItem value="SCHEDULED">Planifié</SelectItem>
               </SelectContent>
             </Select>
+            {status === "SCHEDULED" && (
+              <div className="flex items-end gap-4">
+                <div className="space-y-2 w-1/2">
+                  <Label htmlFor="scheduledDate">Date</Label>
+                  <Input
+                    id="scheduledDate"
+                    type="date"
+                    value={
+                      scheduledAt
+                        ? new Date(scheduledAt).toLocaleDateString("fr-CA")
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const [year, month, day] = e.target.value.split("-");
+                      // On récupère l'heure actuelle prévue (sinon 0 par défaut)
+                      const prevDate = scheduledAt
+                        ? new Date(scheduledAt)
+                        : new Date();
+
+                      // Utiliser getHours() au lieu de getUTCHours() pour avoir l'heure locale
+                      const hour = prevDate.getHours();
+
+                      // On crée la date UTC propre, en tenant compte du fuseau horaire de Paris (UTC+2)
+                      const newUTCDate = new Date(
+                        Date.UTC(
+                          parseInt(year),
+                          parseInt(month) - 1,
+                          parseInt(day),
+                          hour - 2, // On soustrait 2h pour compenser UTC+2
+                          0,
+                          0
+                        )
+                      );
+
+                      setScheduledAt(newUTCDate.toISOString());
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2 w-1/2">
+                  <Label htmlFor="scheduledHour">Heure</Label>
+                  <select
+                    id="scheduledHour"
+                    aria-label="Heure de publication planifiée"
+                    className="w-full border rounded-md px-3 py-2 bg-background text-foreground"
+                    value={scheduledAt ? new Date(scheduledAt).getHours() : ""}
+                    onChange={(e) => {
+                      const selectedLocalHour = parseInt(e.target.value, 10);
+                      const prevDate = scheduledAt
+                        ? new Date(scheduledAt)
+                        : new Date();
+                      const year = prevDate.getFullYear();
+                      const month = prevDate.getMonth();
+                      const day = prevDate.getDate();
+
+                      // Créer une date en UTC avec l'heure locale correcte (pour Paris)
+                      // Pour stocker 12h heure de Paris (UTC+2), on doit stocker 10h en UTC
+                      // On soustrait donc 2h pour compenser le décalage UTC+2
+                      const date = new Date(
+                        Date.UTC(
+                          year,
+                          month,
+                          day,
+                          selectedLocalHour - 2, // Compensation UTC+2 pour Paris
+                          0,
+                          0
+                        )
+                      );
+
+                      console.log(
+                        `Heure sélectionnée: ${selectedLocalHour}:00 (heure de Paris) -> ${date.toISOString()} (UTC)`
+                      );
+
+                      setScheduledAt(date.toISOString());
+                    }}
+                  >
+                    <option value="" disabled>
+                      Sélectionner une heure
+                    </option>
+                    {Array.from({ length: 24 }, (_, i) => {
+                      return (
+                        <option key={i} value={i}>
+                          {String(i).padStart(2, "0")}:00
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -338,7 +449,7 @@ export default function NewArticlePage() {
                       }}
                       className="cursor-pointer px-4 py-2 hover:bg-muted text-primary"
                     >
-                      Créer le tag “{newTagName}”
+                      Créer le tag "{newTagName}"
                     </div>
                   )}
                 </div>
