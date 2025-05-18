@@ -4,6 +4,19 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   console.log("[CRON] Fonction /api/cron/publish-scheduled appelée");
 
+  // Vérification de l'authentification Vercel Cron
+  const authHeader = request.headers.get("authorization");
+  if (
+    !process.env.CRON_SECRET ||
+    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    console.error("[CRON] Erreur d'authentification");
+    return NextResponse.json(
+      { success: false, error: "Non autorisé" },
+      { status: 401 }
+    );
+  }
+
   try {
     // Mise à jour des articles planifiés dont la date est passée
     const result = await prisma.article.updateMany({
