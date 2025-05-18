@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
+  console.log("[CRON] Fonction /api/cron/publish-scheduled appelée");
   // Vérification de l'autorisation
   if (
-    req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`
+    request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return NextResponse.json(
       { success: false, error: "Unauthorized" },
@@ -27,6 +28,8 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log(`[CRON] ${result.count} article(s) publiés`);
+
     return NextResponse.json(
       {
         success: true,
@@ -47,40 +50,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
-
-// Rejeter les autres méthodes HTTP
-export async function GET() {
-  return NextResponse.json(
-    { success: false, error: "Method not allowed" },
-    { status: 405 }
-  );
-}
-
-// Rejeter les autres méthodes HTTP
-export async function PUT() {
-  return NextResponse.json(
-    { success: false, error: "Method not allowed" },
-    { status: 405 }
-  );
-}
-
-// Rejeter les autres méthodes HTTP
-export async function DELETE() {
-  return NextResponse.json(
-    { success: false, error: "Method not allowed" },
-    { status: 405 }
-  );
-}
-
-// Rejeter les autres méthodes HTTP
-export async function PATCH() {
-  return NextResponse.json(
-    { success: false, error: "Method not allowed" },
-    { status: 405 }
-  );
-}
-
-export async function HEAD() {
-  return NextResponse.json({ success: true }, { status: 200 });
 }
