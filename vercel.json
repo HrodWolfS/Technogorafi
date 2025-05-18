@@ -1,11 +1,5 @@
 {
   "buildCommand": "pnpm prisma generate && pnpm build",
   "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "cron": [
-    {
-      "path": "/api/cron/publish-scheduled",
-      "schedule": "0 * * * *"
-    }
-  ]
+  "framework": "nextjs"
 }
