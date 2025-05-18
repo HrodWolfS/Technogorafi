@@ -36,10 +36,9 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={async () => {
-                  await signOut();
+                onClick={() => {
+                  signOut({ callbackUrl: "/" });
                   toast.success("Déconnecté");
-                  router.push("/");
                 }}
                 title="Se déconnecter"
               >
