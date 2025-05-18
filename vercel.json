@@ -1,8 +1,5 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/publish-scheduled",
-      "schedule": "0 * * * *"
-    }
-  ]
+  "buildCommand": "pnpm prisma generate && pnpm build",
+  "installCommand": "pnpm install",
+  "framework": "nextjs"
 }
