@@ -3,15 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   console.log("[CRON] Fonction /api/cron/publish-scheduled appelée");
-  // Vérification de l'autorisation
-  if (
-    request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return NextResponse.json(
-      { success: false, error: "Unauthorized" },
-      { status: 401 }
-    );
-  }
 
   try {
     // Mise à jour des articles planifiés dont la date est passée
