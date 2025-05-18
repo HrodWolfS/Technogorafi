@@ -36,9 +36,19 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => {
-                  signOut({ callbackUrl: "/" });
+                onClick={async () => {
+                  await signOut({ callbackUrl: "/" });
                   toast.success("Déconnecté");
+                  // Nettoyage manuel des cookies résiduels (côté client)
+                  document.cookie =
+                    "__Secure-next-auth.session-token=; Max-Age=0; path=/";
+                  document.cookie =
+                    "__Host-next-auth.csrf-token=; Max-Age=0; path=/";
+                  document.cookie =
+                    "__Secure-next-auth.callback-url=; Max-Age=0; path=/";
+
+                  // Recharge forcée de la page
+                  window.location.href = "/";
                 }}
                 title="Se déconnecter"
               >
