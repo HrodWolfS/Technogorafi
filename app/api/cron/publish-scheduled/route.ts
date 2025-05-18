@@ -57,6 +57,7 @@ export async function GET() {
   );
 }
 
+// Rejeter les autres méthodes HTTP
 export async function PUT() {
   return NextResponse.json(
     { success: false, error: "Method not allowed" },
@@ -64,6 +65,7 @@ export async function PUT() {
   );
 }
 
+// Rejeter les autres méthodes HTTP
 export async function DELETE() {
   return NextResponse.json(
     { success: false, error: "Method not allowed" },
@@ -71,6 +73,7 @@ export async function DELETE() {
   );
 }
 
+// Rejeter les autres méthodes HTTP
 export async function PATCH() {
   return NextResponse.json(
     { success: false, error: "Method not allowed" },
