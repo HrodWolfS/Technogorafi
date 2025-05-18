@@ -80,3 +80,7 @@ export async function PATCH() {
     { status: 405 }
   );
 }
+
+export async function HEAD() {
+  return NextResponse.json({ success: true }, { status: 200 });
+}
