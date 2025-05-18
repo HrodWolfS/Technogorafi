@@ -34,6 +34,7 @@ model Article {
   status      Status    @default(DRAFT)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  scheduledAt DateTime?
   publishedAt DateTime?
   categoryId  String?
   category    Category? @relation(fields: [categoryId], references: [id])

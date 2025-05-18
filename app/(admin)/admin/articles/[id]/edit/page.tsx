@@ -27,6 +27,7 @@ type Article = {
   status: "DRAFT" | "PUBLISHED" | "SCHEDULED";
   categoryId: string;
   tags: { id: string; name: string }[];
+  scheduledAt?: string;
 };
 
 export default function EditArticlePage({
@@ -98,6 +99,18 @@ export default function EditArticlePage({
 
     setIsSubmitting(true);
 
+    console.log("Payload envoyé :", {
+      id,
+      title: article.title,
+      excerpt: article.excerpt,
+      content: article.content,
+      status: article.status,
+      image: article.image,
+      categoryId: article.categoryId,
+      tagIds: selectedTags,
+      scheduledAt: article.scheduledAt,
+    });
+
     try {
       const response = await fetch(`/api/articles/${id}`, {
         method: "PATCH",
@@ -113,6 +126,7 @@ export default function EditArticlePage({
           image: article.image,
           categoryId: article.categoryId,
           tagIds: selectedTags,
+          scheduledAt: article.scheduledAt,
         }),
       });
 
@@ -260,7 +274,7 @@ export default function EditArticlePage({
                       className="text-xs ml-1"
                       onClick={() =>
                         setSelectedTags((prev) =>
-                          prev.filter((t) => t !== tag.id)
+                          prev.filter((t) => t !== tag!.id)
                         )
                       }
                     >
@@ -312,6 +326,108 @@ export default function EditArticlePage({
                 <SelectItem value="SCHEDULED">Planifié</SelectItem>
               </SelectContent>
             </Select>
+            {article.status === "SCHEDULED" && (
+              <div className="flex items-end gap-4">
+                <div className="space-y-2 w-1/2">
+                  <Label htmlFor="scheduledDate">Date</Label>
+                  <Input
+                    id="scheduledDate"
+                    type="date"
+                    value={
+                      article.scheduledAt
+                        ? new Date(article.scheduledAt).toLocaleDateString(
+                            "fr-CA"
+                          )
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const [year, month, day] = e.target.value.split("-");
+                      // On récupère l'heure actuelle prévue (sinon 0 par défaut)
+                      const prevDate = article.scheduledAt
+                        ? new Date(article.scheduledAt)
+                        : new Date();
+
+                      // Utiliser getHours() au lieu de getUTCHours() pour avoir l'heure locale
+                      const hour = prevDate.getHours();
+
+                      // On crée la date UTC propre, en tenant compte du fuseau horaire de Paris (UTC+2)
+                      const newUTCDate = new Date(
+                        Date.UTC(
+                          parseInt(year),
+                          parseInt(month) - 1,
+                          parseInt(day),
+                          hour - 2, // On soustrait 2h pour compenser UTC+2
+                          0,
+                          0
+                        )
+                      );
+
+                      setArticle({
+                        ...article,
+                        scheduledAt: newUTCDate.toISOString(),
+                      });
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2 w-1/2">
+                  <Label htmlFor="scheduledHour">Heure</Label>
+                  <select
+                    id="scheduledHour"
+                    aria-label="Heure de publication planifiée"
+                    className="w-full border rounded-md px-3 py-2 bg-background text-foreground"
+                    value={
+                      article.scheduledAt
+                        ? new Date(article.scheduledAt).getHours()
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const selectedLocalHour = parseInt(e.target.value, 10);
+                      const prevDate = article.scheduledAt
+                        ? new Date(article.scheduledAt)
+                        : new Date();
+                      const year = prevDate.getFullYear();
+                      const month = prevDate.getMonth();
+                      const day = prevDate.getDate();
+
+                      // Créer une date en UTC avec l'heure locale correcte (pour Paris)
+                      // Pour stocker 12h heure de Paris (UTC+2), on doit stocker 10h en UTC
+                      // On soustrait donc 2h pour compenser le décalage UTC+2
+                      const date = new Date(
+                        Date.UTC(
+                          year,
+                          month,
+                          day,
+                          selectedLocalHour - 2, // Compensation UTC+2 pour Paris
+                          0,
+                          0
+                        )
+                      );
+
+                      console.log(
+                        `Heure sélectionnée: ${selectedLocalHour}:00 (heure de Paris) -> ${date.toISOString()} (UTC)`
+                      );
+
+                      setArticle({
+                        ...article,
+                        scheduledAt: date.toISOString(),
+                      });
+                    }}
+                  >
+                    <option value="" disabled>
+                      Sélectionner une heure
+                    </option>
+                    {Array.from({ length: 24 }, (_, i) => {
+                      return (
+                        <option key={i} value={i}>
+                          {String(i).padStart(2, "0")}:00
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

@@ -378,8 +378,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.8.0
-   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
+   * Prisma Client JS version: 6.6.0
+   * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
    */
   export type PrismaVersion = {
     client: string
@@ -3040,6 +3040,7 @@ export namespace Prisma {
     status: $Enums.Status | null
     createdAt: Date | null
     updatedAt: Date | null
+    scheduledAt: Date | null
     publishedAt: Date | null
     categoryId: string | null
   }
@@ -3054,6 +3055,7 @@ export namespace Prisma {
     status: $Enums.Status | null
     createdAt: Date | null
     updatedAt: Date | null
+    scheduledAt: Date | null
     publishedAt: Date | null
     categoryId: string | null
   }
@@ -3068,6 +3070,7 @@ export namespace Prisma {
     status: number
     createdAt: number
     updatedAt: number
+    scheduledAt: number
     publishedAt: number
     categoryId: number
     _all: number
@@ -3084,6 +3087,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     updatedAt?: true
+    scheduledAt?: true
     publishedAt?: true
     categoryId?: true
   }
@@ -3098,6 +3102,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     updatedAt?: true
+    scheduledAt?: true
     publishedAt?: true
     categoryId?: true
   }
@@ -3112,6 +3117,7 @@ export namespace Prisma {
     status?: true
     createdAt?: true
     updatedAt?: true
+    scheduledAt?: true
     publishedAt?: true
     categoryId?: true
     _all?: true
@@ -3199,6 +3205,7 @@ export namespace Prisma {
     status: $Enums.Status
     createdAt: Date
     updatedAt: Date
+    scheduledAt: Date | null
     publishedAt: Date | null
     categoryId: string | null
     _count: ArticleCountAggregateOutputType | null
@@ -3230,6 +3237,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    scheduledAt?: boolean
     publishedAt?: boolean
     categoryId?: boolean
     category?: boolean | Article$categoryArgs<ExtArgs>
@@ -3250,6 +3258,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    scheduledAt?: boolean
     publishedAt?: boolean
     categoryId?: boolean
     category?: boolean | Article$categoryArgs<ExtArgs>
@@ -3265,6 +3274,7 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    scheduledAt?: boolean
     publishedAt?: boolean
     categoryId?: boolean
     category?: boolean | Article$categoryArgs<ExtArgs>
@@ -3280,11 +3290,12 @@ export namespace Prisma {
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    scheduledAt?: boolean
     publishedAt?: boolean
     categoryId?: boolean
   }
 
-  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "excerpt" | "content" | "image" | "status" | "createdAt" | "updatedAt" | "publishedAt" | "categoryId", ExtArgs["result"]["article"]>
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "excerpt" | "content" | "image" | "status" | "createdAt" | "updatedAt" | "scheduledAt" | "publishedAt" | "categoryId", ExtArgs["result"]["article"]>
   export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | Article$categoryArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
@@ -3319,6 +3330,7 @@ export namespace Prisma {
       status: $Enums.Status
       createdAt: Date
       updatedAt: Date
+      scheduledAt: Date | null
       publishedAt: Date | null
       categoryId: string | null
     }, ExtArgs["result"]["article"]>
@@ -3758,6 +3770,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Article", 'Status'>
     readonly createdAt: FieldRef<"Article", 'DateTime'>
     readonly updatedAt: FieldRef<"Article", 'DateTime'>
+    readonly scheduledAt: FieldRef<"Article", 'DateTime'>
     readonly publishedAt: FieldRef<"Article", 'DateTime'>
     readonly categoryId: FieldRef<"Article", 'String'>
   }
@@ -12943,6 +12956,7 @@ export namespace Prisma {
     status: 'status',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    scheduledAt: 'scheduledAt',
     publishedAt: 'publishedAt',
     categoryId: 'categoryId'
   };
@@ -13255,6 +13269,7 @@ export namespace Prisma {
     status?: EnumStatusFilter<"Article"> | $Enums.Status
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
+    scheduledAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     categoryId?: StringNullableFilter<"Article"> | string | null
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
@@ -13274,6 +13289,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
     category?: CategoryOrderByWithRelationInput
@@ -13296,6 +13312,7 @@ export namespace Prisma {
     status?: EnumStatusFilter<"Article"> | $Enums.Status
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
+    scheduledAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     categoryId?: StringNullableFilter<"Article"> | string | null
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
@@ -13315,6 +13332,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     categoryId?: SortOrderInput | SortOrder
     _count?: ArticleCountOrderByAggregateInput
@@ -13335,6 +13353,7 @@ export namespace Prisma {
     status?: EnumStatusWithAggregatesFilter<"Article"> | $Enums.Status
     createdAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
+    scheduledAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
     categoryId?: StringNullableWithAggregatesFilter<"Article"> | string | null
   }
@@ -13917,6 +13936,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     category?: CategoryCreateNestedOneWithoutArticlesInput
     comments?: CommentCreateNestedManyWithoutArticleInput
@@ -13935,6 +13955,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -13953,6 +13974,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
@@ -13971,6 +13993,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -13989,6 +14012,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
   }
@@ -14003,6 +14027,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -14016,6 +14041,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -14780,6 +14806,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    scheduledAt?: SortOrder
     publishedAt?: SortOrder
     categoryId?: SortOrder
   }
@@ -14794,6 +14821,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    scheduledAt?: SortOrder
     publishedAt?: SortOrder
     categoryId?: SortOrder
   }
@@ -14808,6 +14836,7 @@ export namespace Prisma {
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    scheduledAt?: SortOrder
     publishedAt?: SortOrder
     categoryId?: SortOrder
   }
@@ -16179,6 +16208,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     category?: CategoryCreateNestedOneWithoutArticlesInput
     stats?: StatCreateNestedManyWithoutArticleInput
@@ -16196,6 +16226,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
     stats?: StatUncheckedCreateNestedManyWithoutArticleInput
@@ -16229,6 +16260,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     stats?: StatUpdateManyWithoutArticleNestedInput
@@ -16246,6 +16278,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     stats?: StatUncheckedUpdateManyWithoutArticleNestedInput
@@ -16391,6 +16424,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     comments?: CommentCreateNestedManyWithoutArticleInput
     stats?: StatCreateNestedManyWithoutArticleInput
@@ -16408,6 +16442,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     stats?: StatUncheckedCreateNestedManyWithoutArticleInput
@@ -16454,6 +16489,7 @@ export namespace Prisma {
     status?: EnumStatusFilter<"Article"> | $Enums.Status
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
+    scheduledAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     categoryId?: StringNullableFilter<"Article"> | string | null
   }
@@ -16468,6 +16504,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     category?: CategoryCreateNestedOneWithoutArticlesInput
     comments?: CommentCreateNestedManyWithoutArticleInput
@@ -16485,6 +16522,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -16523,6 +16561,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     category?: CategoryCreateNestedOneWithoutArticlesInput
     comments?: CommentCreateNestedManyWithoutArticleInput
@@ -16540,6 +16579,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -16573,6 +16613,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
@@ -16590,6 +16631,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -16607,6 +16649,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     category?: CategoryCreateNestedOneWithoutArticlesInput
     comments?: CommentCreateNestedManyWithoutArticleInput
@@ -16624,6 +16667,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
     categoryId?: string | null
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -16657,6 +16701,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
@@ -16674,6 +16719,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -16899,6 +16945,7 @@ export namespace Prisma {
     status?: $Enums.Status
     createdAt?: Date | string
     updatedAt?: Date | string
+    scheduledAt?: Date | string | null
     publishedAt?: Date | string | null
   }
 
@@ -16912,6 +16959,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     comments?: CommentUpdateManyWithoutArticleNestedInput
     stats?: StatUpdateManyWithoutArticleNestedInput
@@ -16929,6 +16977,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     stats?: StatUncheckedUpdateManyWithoutArticleNestedInput
@@ -16946,6 +16995,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -16959,6 +17009,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
@@ -16976,6 +17027,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -16993,6 +17045,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
   }

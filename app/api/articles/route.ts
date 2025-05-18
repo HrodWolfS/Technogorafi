@@ -99,6 +99,7 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    console.log("[🔧 PATCH /api/articles/] appelé");
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== "ADMIN") {
       return new NextResponse("Unauthorized", { status: 401 });
