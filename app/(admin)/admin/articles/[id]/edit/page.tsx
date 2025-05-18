@@ -117,6 +117,7 @@ export default function EditArticlePage({
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           id,
           title: article.title,

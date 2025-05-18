@@ -34,12 +34,21 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-next-auth.session-token"
+          : "next-auth.session-token",
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
         secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXT_PUBLIC_APP_URL
+              ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
+              : undefined
+            : undefined,
       },
     },
   },

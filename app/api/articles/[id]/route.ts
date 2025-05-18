@@ -3,6 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+// En-têtes CORS pour les routes API sécurisées
+const corsHeaders = {
+  "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_URL || "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true",
+};
+
+// Handler OPTIONS pour les requêtes preflight CORS
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: corsHeaders });
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -34,9 +47,18 @@ export async function PATCH(
 ) {
   try {
     console.log("[🔧 PATCH /api/articles/[id]] appelé");
+
+    // Vérification de session avec journalisation pour debug
     const session = await getServerSession(authOptions);
+    console.log("Session détectée:", !!session, "User:", session?.user?.email);
+
     if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      console.log("⚠️ ERREUR AUTH: Session invalide ou manquante");
+      // Renvoyer la réponse avec les en-têtes CORS
+      return new NextResponse("Unauthorized", {
+        status: 401,
+        headers: corsHeaders,
+      });
     }
 
     const { id } = await params;
@@ -96,7 +118,8 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(article);
+    // Ajouter les en-têtes CORS à la réponse
+    return NextResponse.json(article, { headers: corsHeaders });
   } catch (error) {
     console.error(
       "[ARTICLE_PATCH]",
@@ -106,6 +129,10 @@ export async function PATCH(
       "[ARTICLE_PATCH - STACK]",
       error instanceof Error ? error.stack : error
     );
-    return new NextResponse("Erreur serveur: PATCH", { status: 500 });
+    // Ajouter les en-têtes CORS même en cas d'erreur
+    return new NextResponse("Erreur serveur: PATCH", {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 }
