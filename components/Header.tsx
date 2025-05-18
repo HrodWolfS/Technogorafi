@@ -47,6 +47,10 @@ export default function Header() {
                   document.cookie =
                     "__Secure-next-auth.callback-url=; Max-Age=0; path=/";
 
+                  localStorage.removeItem("nextauth.message");
+                  localStorage.removeItem("next-auth.session-token");
+                  localStorage.clear();
+
                   // Recharge forcée de la page
                   window.location.href = "/";
                 }}
