@@ -1,124 +1,94 @@
-# Technogorafi - Blog
+# 📰 Technogorafi
 
-Blog personnel créé avec Next.js, TypeScript, Tailwind CSS, et Supabase.
+> **Le Gorafi de la tech** – Un terrain de jeu pour tester (et montrer) mes skills.  
+> **Objectif :** Impressionner les recruteurs & collègues.  
+> **Utilité réelle :** Aucune.
 
-## 🚀 Installation
+---
 
-1. Cloner le repo
+## ✨ Pourquoi ce repo existe ?
+
+1. **Démo full‑stack** Next.js 14 + Supabase + NextAuth.
+2. **Exercice de style** : articles absurdes, administration du blog, planning auto.
+3. **Terrain de bidouilles** : cron jobs, markdown, upload, RLS… tout y passe.
+
+---
+
+## 🎒 Installation (5 commandes)
 
 ```bash
 git clone https://github.com/HrodWolfS/Technogorafi.git
 cd Technogorafi
-```
-
-2. Installer les dépendances
-
-```bash
 pnpm install
-```
-
-3. Configurer les variables d'environnement
-
-```bash
-cp .env.example .env
-```
-
-Remplir les variables dans `.env` avec vos valeurs
-
-4. Configurer la base de données
-
-```bash
+cp .env.example .env         # remplis tes clés Supabase / GitHub
 pnpm dlx prisma db push
-```
-
-5. Démarrer le serveur de développement
-
-```bash
 pnpm dev
 ```
 
-## 🛠️ Stack Technique
+Tu as maintenant un faux Gorafi tech qui tourne en local.
 
-- **Framework**: Next.js 14 avec App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: PostgreSQL via Supabase
-- **ORM**: Prisma
-- **Auth**: BetterAuth
-- **Markdown**: react-markdown + remark-gfm
-- **Hosting**: Vercel
-- **Storage**: Supabase Storage
+---
 
-## 📁 Structure du Projet
+## 🏗 Stack express
 
-```
-├── app/                  # Routes Next.js
-│   ├── (admin)/         # Routes admin protégées
-│   ├── (public)/        # Routes publiques
-│   └── api/             # Routes API
-├── components/          # Composants React
-├── lib/                 # Utilitaires et configurations
-├── prisma/             # Schéma et migrations DB
-└── public/             # Assets statiques
-```
+| Bloc  | Tech                             | Pourquoi                      |
+| ----- | -------------------------------- | ----------------------------- |
+| Front | **Next.js 14** (App Router)      | SSR + RSC + SEO 👍            |
+| Back  | **Prisma** + Supabase            | Postgres managé, RLS, storage |
+| Auth  | **NextAuth** (GitHub + Supabase) | OAuth simple                  |
+| UI    | Tailwind + shadcn/ui             | Rapidité & composabilité      |
+| Cron  | **cron-job.org**                 | Publication automatique       |
+| MD    | react-markdown + remark-gfm      | Écriture vitesse lumière      |
 
-## 🔐 Authentification
+---
 
-L'authentification est gérée via BetterAuth avec GitHub OAuth. Seul l'administrateur (email configuré dans `ADMIN_EMAIL`) peut accéder au dashboard admin.
+## 🖋 Fonctionnalités clés
 
-## 📝 Création d'Articles
+- **Éditeur Markdown** avec preview live
+- **Upload d’images** (bucket Supabase)
+- **Tags à la volée** & catégories dynamiques
+- **Statuts** : Brouillon / Publié / Planifié
+- **Cron auto‑publication** (toutes les heures)
+- **Dashboard admin** protégé (NextAuth)
 
-Les articles sont écrits en Markdown avec support pour :
+---
 
-- Syntaxe GFM (GitHub Flavored Markdown)
-- Upload d'images (drag & drop)
-- Preview en temps réel
-- Brouillons et programmation
+## 🔁 Route cron
 
-## 🌐 Déploiement
-
-1. Créer un projet sur Vercel
-2. Connecter le repo GitHub
-3. Configurer les variables d'environnement
-4. Déployer !
-
-## 📄 License
-
-MIT
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```http
+POST /api/cron/publish-scheduled
+Header: Authorization: Bearer $CRON_SECRET
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Publie chaque article `SCHEDULED` dont la date est atteinte.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌳 Arborescence (TL;DR)
 
-## Learn More
+```
+app/         # Routes + API Next.js
+components/  # UI réutilisable
+lib/         # Helpers auth, supabase, SEO
+prisma/      # Schéma DB
+public/      # Assets statiques
+cron/        # Scripts & route cron
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💡 Road‑map
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [ ] Changer l'authentification pour BetterAuth
+- [ ] Flux RSS absurde
+- [ ] Multi‑admin (si quelqu’un est assez fou pour contribuer)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Licence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT – Utilise, clé USB, fork… Tant que tu gardes le troll 🧌
 
-# Technogorafi
+---
+
+_Made by Rodolphe – technicien telecom → dev web, curieux sceptique, un brin sarcastique._
