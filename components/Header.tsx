@@ -1,17 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import Logo from "./Logo";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 export default function Header() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { status, logout } = useAuth();
 
   return (
     <header className="border-b border-border bg-card">
@@ -36,24 +33,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={async () => {
-                  await signOut({ callbackUrl: "/" });
-                  toast.success("Déconnecté");
-                  // Nettoyage manuel des cookies résiduels (côté client)
-                  document.cookie =
-                    "__Secure-next-auth.session-token=; Max-Age=0; path=/";
-                  document.cookie =
-                    "__Host-next-auth.csrf-token=; Max-Age=0; path=/";
-                  document.cookie =
-                    "__Secure-next-auth.callback-url=; Max-Age=0; path=/";
-
-                  localStorage.removeItem("nextauth.message");
-                  localStorage.removeItem("next-auth.session-token");
-                  localStorage.clear();
-
-                  // Recharge forcée de la page
-                  window.location.href = "/";
-                }}
+                onClick={logout}
                 title="Se déconnecter"
               >
                 <LogOut className="h-5 w-5" />

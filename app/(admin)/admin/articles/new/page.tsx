@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
-import { supabase, uploadImage } from "@/lib/supabase";
+import { uploadImage } from "@/lib/supabase";
 import { ChevronLeft, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -100,12 +100,6 @@ export default function NewArticlePage() {
 
   const handleImageUpload = async (file: File) => {
     try {
-      // Vérifier la session Supabase
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      console.log("AVANT UPLOAD - SESSION:", !!session, session?.user?.id);
-
       setIsUploading(true);
       const imageUrl = await uploadImage(file);
       console.log("IMAGE URL:", imageUrl);

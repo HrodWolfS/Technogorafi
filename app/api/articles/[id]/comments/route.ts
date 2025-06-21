@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -10,12 +12,13 @@ const commentSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const comments = await prisma.comment.findMany({
       where: {
-        articleId: params.id,
+        articleId: id,
         approved: true,
       },
       orderBy: {
@@ -38,16 +41,17 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const validatedData = commentSchema.parse(body);
 
     const comment = await prisma.comment.create({
       data: {
         ...validatedData,
-        articleId: params.id,
+        articleId: id,
         approved: false,
       },
       select: {

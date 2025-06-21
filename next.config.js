@@ -12,7 +12,7 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-    domains: ["vcffjuyglbgbpjunteob.supabase.co"],
+    domains: ["supabase.co", "avatars.githubusercontent.com"],
   },
   // Désactive TOUTES les vérifications
   typescript: {
@@ -27,8 +27,10 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_URL || "https://technogorafi.vercel.app",
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ["localhost:3000"],
+    },
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

@@ -2,14 +2,12 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
 import ReadingProgress from "@/components/ReadingProgress";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/react";
+import type { Metadata } from "next";
 import { IBM_Plex_Sans, Inter, Permanent_Marker } from "next/font/google";
 import type { ReactNode } from "react";
-import { Toaster } from "sonner";
 import "./globals.css";
-import type { Metadata } from "next";
-import { Providers } from "./providers";
+import Providers from "./providers";
 
 const permanentMarker = Permanent_Marker({
   weight: "400",
@@ -131,18 +129,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${ibmPlex.variable} ${inter.variable} ${permanentMarker.variable} font-inter bg-background`}
       >
         <Providers>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="container mx-auto px-4 py-8 flex-grow">
-                <PageTransition>{children}</PageTransition>
-                <ReadingProgress />
-              </main>
-              <Footer />
-            </div>
-          </ThemeProvider>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="container mx-auto px-4 py-8 flex-grow">
+              <PageTransition>{children}</PageTransition>
+              <ReadingProgress />
+            </main>
+            <Footer />
+          </div>
         </Providers>
-        <Toaster position="bottom-right" />
         <Analytics />
       </body>
     </html>

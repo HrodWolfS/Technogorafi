@@ -1,6 +1,8 @@
-import { authOptions } from "@/lib/auth";
+export const runtime = "nodejs";
+
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -44,9 +46,11 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-    if (!session?.user?.email) {
+    if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 

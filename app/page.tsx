@@ -1,46 +1,27 @@
-import { prisma } from "@/lib/prisma";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { Search } from "@/components/Search";
-import { Suspense } from "react";
+import type { Article, Category } from "@/lib/generated/prisma";
 import type { PageParams } from "@/types/next";
+import { Suspense } from "react";
 
 export default async function HomePage({ searchParams }: PageParams) {
-  const category = typeof searchParams.category === "string" ? searchParams.category : "";
+  const params = await searchParams;
+  const category = typeof params.category === "string" ? params.category : "";
 
-  // Récupérer les articles publiés avec la catégorie sélectionnée
-  const articles = await prisma.article.findMany({
-    where: {
-      status: "PUBLISHED",
-      publishedAt: {
-        lte: new Date(),
-      },
-      ...(category
-        ? {
-            category: {
-              name: category,
-            },
-          }
-        : {}),
-    },
-    include: {
-      category: true,
-    },
-    orderBy: {
-      publishedAt: "desc",
-    },
-  });
+  // Récupérer les données via l'API route
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/home?category=${category}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  // Récupérer les catégories uniques
-  const categories = await prisma.category.findMany({
-    where: {
-      articles: {
-        some: {
-          status: "PUBLISHED",
-        },
-      },
-    },
-  });
+  if (!response.ok) {
+    throw new Error("Erreur lors de la récupération des données");
+  }
+
+  const { articles, categories }: { articles: Article[], categories: Category[] } = await response.json();
 
   return (
     <div className="space-y-8">
@@ -52,7 +33,7 @@ export default async function HomePage({ searchParams }: PageParams) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article) => (
+        {articles.map((article: Article) => (
           <ArticleCard key={article.id} article={article} />
         ))}
       </div>

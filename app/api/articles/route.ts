@@ -1,6 +1,8 @@
-import { authOptions } from "@/lib/auth";
+export const runtime = "nodejs";
+
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
 import { z } from "zod";
@@ -19,15 +21,43 @@ const articleSchema = z.object({
 
 type Status = "DRAFT" | "PUBLISHED" | "SCHEDULED";
 
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const status = searchParams.get("status");
+  const categoryId = searchParams.get("categoryId");
+  const tagId = searchParams.get("tagId");
 
-    const json = await request.json();
-    const validatedData = articleSchema.parse(json);
+  const articles = await prisma.article.findMany({
+    where: {
+      status: status as Status | undefined,
+      categoryId: categoryId || undefined,
+      tags: tagId ? { some: { id: tagId } } : undefined,
+    },
+    include: {
+      category: true,
+      tags: true,
+      _count: {
+        select: { comments: true, views: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return NextResponse.json(articles);
+}
+
+export async function POST(request: Request) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const validatedData = articleSchema.parse(body);
     const {
       title,
       excerpt,
@@ -78,47 +108,17 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const queryStatus = searchParams.get("status");
-    const session = await getServerSession(authOptions);
+export async function PATCH(request: Request) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    const where = {
-      ...(queryStatus && queryStatus !== "all"
-        ? { status: queryStatus as Status }
-        : {}),
-      ...(session?.user?.role !== "ADMIN"
-        ? { status: "PUBLISHED" as Status, publishedAt: { lte: new Date() } }
-        : {}),
-    };
-
-    const articles = await prisma.article.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: { comments: true },
-        },
-      },
-    });
-
-    return NextResponse.json(articles);
-  } catch (error) {
-    console.error("[ARTICLES_GET]", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
   }
-}
 
-export async function PATCH(req: Request) {
   try {
-    console.log("[🔧 PATCH /api/articles/] appelé");
-    const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const body = await req.json();
+    const body = await request.json();
     const { id, ...data } = body;
 
     const article = await prisma.article.update({
@@ -140,14 +140,17 @@ export async function PATCH(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+export async function DELETE(request: Request) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    const { searchParams } = new URL(req.url);
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id) {
