@@ -110,6 +110,40 @@
 @layer components {
   .prose {
     @apply max-w-none;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      @apply font-bold text-heading;
+    }
+
+    h1 {
+      @apply text-4xl mb-4 mt-6;
+    }
+    h2 {
+      @apply text-3xl mb-3 mt-5 border-b pb-2 border-border;
+    }
+    h3 {
+      @apply text-2xl mb-2 mt-4;
+    }
+    h4 {
+      @apply text-xl mb-1 mt-3;
+    }
+    p {
+      @apply mb-4;
+    }
+    a {
+      @apply text-primary hover:underline;
+    }
+    code {
+      @apply bg-muted text-primary rounded px-1 py-0.5;
+    }
+    pre {
+      @apply bg-muted p-4 rounded-lg overflow-x-auto;
+    }
   }
 
   .article-card {
