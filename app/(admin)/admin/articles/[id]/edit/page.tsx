@@ -1,5 +1,7 @@
 "use client";
 
+import slugify from "slugify";
+
 import Editor from "@/components/admin/Editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +33,18 @@ type Article = {
   publishedAt: string | null | undefined;
 };
 
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+type Tag = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 export default function EditArticlePage({
   params,
 }: {
@@ -39,15 +53,13 @@ export default function EditArticlePage({
   const { id } = use(params);
   const router = useRouter();
   const [article, setArticle] = useState<Article | null>(null);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    []
-  );
-  const [tags, setTags] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [newTagName, setNewTagName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [tagSearch, setTagSearch] = useState("");
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -260,10 +272,10 @@ export default function EditArticlePage({
           </div>
 
           <div className="space-y-2">
-            <Label>Tags</Label>
+            <Label htmlFor="tags">Tags</Label>
             <div className="flex flex-wrap gap-2">
               {selectedTags
-                .map((id) => tags.find((t) => t.id === id))
+                .map((tagId) => tags.find((t) => t.id === tagId))
                 .filter(Boolean)
                 .map((tag) => (
                   <div
@@ -276,7 +288,7 @@ export default function EditArticlePage({
                       className="text-xs ml-1"
                       onClick={() =>
                         setSelectedTags((prev) =>
-                          prev.filter((t) => t !== tag!.id)
+                          prev.filter((id) => id !== tag!.id)
                         )
                       }
                     >
@@ -286,29 +298,72 @@ export default function EditArticlePage({
                 ))}
             </div>
 
-            <Select
-              onValueChange={(tagId) => {
-                setSelectedTags([...selectedTags, tagId]);
-                setTagSearch("");
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Rechercher ou créer un tag..." />
-              </SelectTrigger>
-              <SelectContent>
-                {tags
-                  .filter(
-                    (tag) =>
-                      !selectedTags.includes(tag.id) &&
-                      tag.name.toLowerCase().includes(tagSearch.toLowerCase())
-                  )
-                  .map((tag) => (
-                    <SelectItem key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Rechercher ou créer un tag..."
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                className="mt-2"
+              />
+              {newTagName && (
+                <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-md max-h-48 overflow-auto">
+                  {tags
+                    .filter(
+                      (tag) =>
+                        tag.name
+                          .toLowerCase()
+                          .includes(newTagName.toLowerCase()) &&
+                        !selectedTags.includes(tag.id)
+                    )
+                    .map((tag) => (
+                      <div
+                        key={tag.id}
+                        onClick={() => {
+                          setSelectedTags((prev) => [...prev, tag.id]);
+                          setNewTagName("");
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-muted"
+                      >
+                        {tag.name}
+                      </div>
+                    ))}
+                  {!tags.some(
+                    (t) => t.name.toLowerCase() === newTagName.toLowerCase()
+                  ) && (
+                    <div
+                      onClick={async () => {
+                        try {
+                          const res = await fetch("/api/tags", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              name: newTagName,
+                              slug: slugify(newTagName, {
+                                lower: true,
+                                strict: true,
+                              }),
+                            }),
+                            credentials: "include",
+                          });
+                          if (!res.ok) throw new Error();
+                          const createdTag = await res.json();
+                          setTags((prev) => [...prev, createdTag]);
+                          setSelectedTags((prev) => [...prev, createdTag.id]);
+                          setNewTagName("");
+                          toast.success("Tag créé !");
+                        } catch (err) {
+                          toast.error("Erreur lors de la création du tag");
+                        }
+                      }}
+                      className="cursor-pointer px-4 py-2 hover:bg-muted text-primary"
+                    >
+                      Créer le tag "{newTagName}"
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -323,11 +378,11 @@ export default function EditArticlePage({
                         status: value,
                         scheduledAt:
                           value === "SCHEDULED"
-                            ? prev.scheduledAt ?? new Date().toISOString()
+                            ? (prev.scheduledAt ?? new Date().toISOString())
                             : null,
                         publishedAt:
                           value === "PUBLISHED"
-                            ? prev.publishedAt ?? new Date().toISOString()
+                            ? (prev.publishedAt ?? new Date().toISOString())
                             : null,
                       }
                     : prev
