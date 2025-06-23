@@ -65,21 +65,51 @@ export async function PATCH(
   }
 
   const body = await request.json();
+
+  const articleToUpdate = await prisma.article.findUnique({
+    where: { id },
+  });
+
+  if (!articleToUpdate) {
+    return new NextResponse("Article not found", { status: 404 });
+  }
+
+  const data: any = {
+    title: body.title,
+    slug: body.slug,
+    excerpt: body.excerpt,
+    content: body.content,
+    image: body.image,
+    status: body.status,
+    categoryId: body.categoryId,
+    tags: {
+      set: body.tagIds ? body.tagIds.map((id: string) => ({ id })) : [],
+    },
+  };
+
+  // Gérer les transitions de statut
+  if (body.status !== articleToUpdate.status) {
+    switch (body.status) {
+      case "PUBLISHED":
+        data.publishedAt = new Date();
+        data.scheduledAt = null;
+        break;
+      case "SCHEDULED":
+        data.scheduledAt = body.scheduledAt
+          ? new Date(body.scheduledAt)
+          : new Date();
+        data.publishedAt = null;
+        break;
+      case "DRAFT":
+        data.publishedAt = null;
+        data.scheduledAt = null;
+        break;
+    }
+  }
+
   const article = await prisma.article.update({
     where: { id },
-    data: {
-      title: body.title,
-      slug: body.slug,
-      excerpt: body.excerpt,
-      content: body.content,
-      image: body.image,
-      status: body.status,
-      categoryId: body.categoryId,
-      tags: {
-        set: [],
-        connect: body.tagIds?.map((id: string) => ({ id })) || [],
-      },
-    },
+    data,
   });
 
   return NextResponse.json(article);
